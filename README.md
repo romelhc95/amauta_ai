@@ -44,4 +44,5 @@ CREATE TABLE courses (
 );
 ```
 
-(Más detalles a ser agregados por @architect)
+---
+*Documentación generada automáticamente por el servidor MCP de GitHub - Amauta.ai Architect*
