@@ -8,10 +8,23 @@ Amauta.ai es una plataforma diseñada para centralizar y comparar ofertas educat
 - [x] Scripts de recolección de datos iniciales.
 - [x] **8 programas de DATA capturados** (UTEC & UPC Pilot).
 
-## Sprint 2: Security & Frontend Kickoff - IN PROGRESS
-- [x] **Security Hardening:** Credenciales movidas a `.env`, Docker-compose actualizado y puertos de DB protegidos.
+## Sprint 2: FastAPI Backend & Security Audit - COMPLETED
+- [x] **Backend Core:** FastAPI application in `/api` with SQLAlchemy ORM.
+- [x] **Secure API:** Implemented `GET /courses` with filtering (name, mode, max_price).
+- [x] **Security Audit:** Standardized Pydantic validation and global exception handling (no error traces).
+- [x] **Automated Testing:** 100% test coverage for API endpoints with Pytest.
 - [x] **Frontend Init:** Next.js 14 configurado en `/web` con Tailwind CSS y Shadcn/UI.
 - [ ] Implementación de la UI inspirada en Google Flights.
+
+## Estructura de la API
+La API se encuentra en el directorio `/api` y utiliza FastAPI para exponer los datos de PostgreSQL.
+
+### Endpoints
+- `GET /courses`: Lista todos los cursos disponibles.
+  - **Filtros:**
+    - `name`: Búsqueda parcial por nombre (case-insensitive).
+    - `mode`: Filtrar por modalidad (`Presencial`, `Híbrido`, `Remoto`).
+    - `max_price`: Filtrar por precio máximo en PEN.
 
 ## Arquitectura de Base de Datos
 Estado actual: Operativa en Docker con PostgreSQL 16.
