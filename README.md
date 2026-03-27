@@ -12,19 +12,56 @@ Amauta.ai es una plataforma diseñada para centralizar y comparar ofertas educat
 - [x] **Backend Core:** FastAPI application in `/api` with SQLAlchemy ORM.
 - [x] **Secure API:** Implemented `GET /courses` with filtering (name, mode, max_price).
 - [x] **Security Audit:** Standardized Pydantic validation and global exception handling (no error traces).
-- [x] **Automated Testing:** 100% test coverage for API endpoints with Pytest.
+- [x] **Automated Testing:** 100% test coverage for API endpoints with Pytest (`tests/test_sprint2.py`).
 - [x] **Frontend Init:** Next.js 14 configurado en `/web` con Tailwind CSS y Shadcn/UI.
-- [ ] Implementación de la UI inspirada en Google Flights.
 
-## Estructura de la API
-La API se encuentra en el directorio `/api` y utiliza FastAPI para exponer los datos de PostgreSQL.
+## API Technical Documentation
+
+### Base URL
+`http://localhost:8000` (default for development)
 
 ### Endpoints
-- `GET /courses`: Lista todos los cursos disponibles.
-  - **Filtros:**
-    - `name`: Búsqueda parcial por nombre (case-insensitive).
-    - `mode`: Filtrar por modalidad (`Presencial`, `Híbrido`, `Remoto`).
-    - `max_price`: Filtrar por precio máximo en PEN.
+
+#### 1. Search Courses
+`GET /courses`
+
+Returns a list of courses with optional filters.
+
+**Query Parameters:**
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `name` | string | Partial, case-insensitive match for course name. |
+| `mode` | string | Filter by modality: `Presencial`, `Híbrido`, `Remoto`. |
+| `max_price` | decimal | Maximum price in PEN. |
+
+**Example Request:**
+`GET /courses?name=Ciencia&mode=Remoto&max_price=1000`
+
+**Example Response:**
+```json
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "institution_id": "6eb31464-a690-4963-9562-b9116a49591e",
+    "institution_name": "UPN",
+    "name": "Ingeniería en Ciencia de Datos",
+    "slug": "ingenieria-en-ciencia-de-datos",
+    "price_pen": 0.0,
+    "mode": "Híbrido",
+    "address": "Sede Breña/Los Olivos, Lima",
+    "duration": "10 ciclos",
+    "url": "https://www.upn.edu.pe/...",
+    "last_scraped_at": "2026-03-27T10:00:00Z",
+    "created_at": "2026-03-27T10:00:00Z",
+    "updated_at": "2026-03-27T10:00:00Z"
+  }
+]
+```
+
+### Security & Error Handling
+- **SQL Injection Prevention:** All queries use SQLAlchemy ORM with parameterized inputs.
+- **Data Validation:** Pydantic schemas enforce strict typing and constraints on all API inputs/outputs.
+- **Error Privacy:** A global exception handler catches all unhandled exceptions and returns a generic 500 message, preventing leakage of sensitive system information or stack traces.
 
 ## Arquitectura de Base de Datos
 Estado actual: Operativa en Docker con PostgreSQL 16.
