@@ -1,4 +1,4 @@
-# Action Plan: Sprint 1 - Harvester for Amauta.ai
+# Action Plan: Fase 1 - Harvester for Amauta.ai
 
 ## Goal
 Build the PostgreSQL foundation and implement automated data ingestion for Peruvian universities (UTEC and UPC as pilots).

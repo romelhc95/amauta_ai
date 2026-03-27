@@ -35,38 +35,50 @@ def test_read_root(client):
     assert response.status_code == 200
     assert response.json() == {"message": "Welcome to Amauta.ai API"}
 
-def test_get_courses_success(client, mock_db):
+@pytest.mark.asyncio
+async def test_get_courses_success(client, mock_db):
     # Mock data
     mock_institution_id = uuid4()
     mock_course_id = uuid4()
-    mock_course = MagicMock()
-    mock_course.id = mock_course_id
-    mock_course.institution_id = mock_institution_id
-    mock_course.name = "Test Course"
-    mock_course.slug = "test-course"
-    mock_course.price_pen = Decimal("100.00")
-    mock_course.mode = "Remoto"
-    mock_course.address = None
-    mock_course.duration = "1 month"
-    mock_course.url = "http://example.com"
-    mock_course.last_scraped_at = datetime.now()
-    mock_course.created_at = datetime.now()
-    mock_course.updated_at = datetime.now()
-    mock_course.institution_name = "Test Institution"
+    
+    # Using a namedtuple or dict for mock results to match _fields
+    from collections import namedtuple
+    Row = namedtuple("Row", ["id", "institution_id", "name", "slug", "price_pen", "mode", "address", "duration", "url", "last_scraped_at", "created_at", "updated_at", "institution_name", "location_lat", "location_long"])
+    
+    mock_row = Row(
+        id=mock_course_id,
+        institution_id=mock_institution_id,
+        name="Test Course",
+        slug="test-course",
+        price_pen=Decimal("100.00"),
+        mode="Remoto",
+        address="Test Address",
+        duration="1 month",
+        url="http://example.com",
+        last_scraped_at=datetime.now(),
+        created_at=datetime.now(),
+        updated_at=datetime.now(),
+        institution_name="Test Institution",
+        location_lat=Decimal("-12.1223"),
+        location_long=Decimal("-77.0298")
+    )
 
     # Mocking the chain: db.query(...).join(...).filter(...).all()
     mock_query = mock_db.query.return_value
     mock_join = mock_query.join.return_value
-    mock_join.all.return_value = [mock_course]
+    mock_join.all.return_value = [mock_row]
 
-    response = client.get("/courses")
+    with patch("api.utils.get_client_coordinates", return_value=(-12.1223, -77.0298)):
+        response = client.get("/courses")
     
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 1
     assert data[0]["name"] == "Test Course"
-    assert data[0]["institution_name"] == "Test Institution"
-    # Validate against schema (pydantic will raise error if it doesn't match)
+    assert "distance_km" in data[0]
+    # In this case distance should be 0 because coordinates are the same
+    assert data[0]["distance_km"] == 0.0
+    # Validate against schema
     schemas.CourseResponse(**data[0])
 
 def test_get_courses_filter_name(client, mock_db):

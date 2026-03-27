@@ -2,18 +2,33 @@
 
 Amauta.ai es una plataforma diseñada para centralizar y comparar ofertas educativas en Latinoamérica, comenzando por el mercado peruano.
 
-## Sprint 1: Harvester Pilot (UTEC/UPC) - COMPLETED
+## Fase 1: Harvester Pilot (UTEC/UPC) - COMPLETED
 - [x] Estructura base del proyecto.
 - [x] Esquema inicial de PostgreSQL orientado a geolocalización.
 - [x] Scripts de recolección de datos iniciales.
 - [x] **8 programas de DATA capturados** (UTEC & UPC Pilot).
 
-## Sprint 2: FastAPI Backend & Security Audit - COMPLETED
+## Fase 2: FastAPI Backend & Security Audit - COMPLETED
 - [x] **Backend Core:** FastAPI application in `/api` with SQLAlchemy ORM.
 - [x] **Secure API:** Implemented `GET /courses` with filtering (name, mode, max_price).
 - [x] **Security Audit:** Standardized Pydantic validation and global exception handling (no error traces).
-- [x] **Automated Testing:** 100% test coverage for API endpoints with Pytest (`tests/test_sprint2.py`).
+- [x] **Automated Testing:** 100% test coverage for API endpoints with Pytest (`tests/test_fase2.py`).
 - [x] **Frontend Init:** Next.js 14 configurado en `/web` con Tailwind CSS y Shadcn/UI.
+
+## Fase 3: Frontend Search & Geolocation Logic - COMPLETED
+- [x] **Geolocalización:** Implementada lógica de cálculo de distancia Haversine (geodesic) basada en IP.
+- [x] **Privacidad:** Anonimización de IPs (máscara de último octeto) antes de geolocalización externa.
+- [x] **Frontend Search:** Buscador interactivo en Next.js 14 con tarjetas minimalistas de Shadcn/UI.
+- [x] **Ordenación:** Resultados ordenados automáticamente por cercanía al usuario.
+
+### Flujo de Geolocalización
+1. El Frontend solicita `GET /courses`.
+2. El Backend identifica la IP del cliente (`request.client.host`).
+3. La IP es anonimizada (ej. `190.235.154.12` -> `190.235.154.0`).
+4. Se consultan las coordenadas (lat, lon) mediante `ip-api.com`.
+5. Se calcula la distancia entre el usuario y cada institución usando la fórmula Haversine (`geopy`).
+6. Los resultados se inyectan con el campo `distance_km` y se ordenan de menor a mayor distancia.
+7. Las coordenadas exactas de las instituciones se filtran mediante Pydantic para no exponer datos sensibles.
 
 ## API Technical Documentation
 
@@ -68,7 +83,7 @@ Estado actual: Operativa en Docker con PostgreSQL 16.
 - [x] **Instituciones:** UTEC y UPC inicializadas.
 - [x] **Cursos:** 8 registros activos con metadata de modalidad y geolocalización.
 
-### Esquema SQL (Sprint 1.1)
+### Esquema SQL (Fase 1.1)
 ```sql
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 

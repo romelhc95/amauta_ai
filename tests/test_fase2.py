@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from uuid import uuid4
 from decimal import Decimal
 from datetime import datetime
@@ -9,6 +9,12 @@ from datetime import datetime
 from api.main import app
 from api.database import get_db
 from api import schemas
+
+# Global mock for IP Geolocation to avoid external calls during tests
+@pytest.fixture(autouse=True)
+def mock_ip_geolocation():
+    with patch("api.utils.get_client_coordinates", return_value=(-12.1223, -77.0298)) as m:
+        yield m
 
 # Mock courses based on scripts/discover_courses.py
 MOCK_COURSES = [
@@ -25,7 +31,9 @@ MOCK_COURSES = [
         "url": "https://www.upn.edu.pe/carreras/ingenieria-en-ciencia-de-datos",
         "last_scraped_at": datetime.now(),
         "created_at": datetime.now(),
-        "updated_at": datetime.now()
+        "updated_at": datetime.now(),
+        "location_lat": Decimal("-12.1223"),
+        "location_long": Decimal("-77.0298")
     },
     {
         "id": uuid4(),

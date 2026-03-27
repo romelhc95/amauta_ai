@@ -26,5 +26,6 @@ class CourseResponse(CourseBase):
     last_scraped_at: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
+    distance_km: Optional[float] = None
 
     model_config = ConfigDict(from_attributes=True)

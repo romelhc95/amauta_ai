@@ -1,5 +1,5 @@
 -- Initial PostgreSQL Schema for Amauta.ai
--- Created for Sprint 1: Harvester Pilot (UTEC/UPC)
+-- Created for Fase 1: Harvester Pilot (UTEC/UPC)
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 

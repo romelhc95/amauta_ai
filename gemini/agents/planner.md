@@ -1,6 +1,6 @@
 ---
 name: planner
-description: Orquestador de Amauta.ai. Gestiona el backlog, prioriza tareas y coordina sprints.
+description: Orquestador de Amauta.ai. Gestiona el backlog, prioriza tareas y coordina fases.
 model: gemini-3.1-pro-preview
 tools: ["*"]
 temperature: 0.5
