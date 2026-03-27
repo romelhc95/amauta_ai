@@ -2,15 +2,23 @@
 
 Amauta.ai es una plataforma diseñada para centralizar y comparar ofertas educativas en Latinoamérica, comenzando por el mercado peruano.
 
-## Sprint 1: Harvester Pilot (UTEC/UPC)
+## Sprint 1: Harvester Pilot (UTEC/UPC) - COMPLETED
 - [x] Estructura base del proyecto.
 - [x] Esquema inicial de PostgreSQL orientado a geolocalización.
 - [x] Scripts de recolección de datos iniciales.
+- [x] **8 programas de DATA capturados** (UTEC & UPC Pilot).
+
+## Sprint 2: Security & Frontend Kickoff - IN PROGRESS
+- [x] **Security Hardening:** Credenciales movidas a `.env`, Docker-compose actualizado y puertos de DB protegidos.
+- [x] **Frontend Init:** Next.js 14 configurado en `/web` con Tailwind CSS y Shadcn/UI.
+- [ ] Implementación de la UI inspirada en Google Flights.
 
 ## Arquitectura de Base de Datos
-Este esquema define las entidades principales para instituciones y cursos.
+Estado actual: Operativa en Docker con PostgreSQL 16.
+- [x] **Instituciones:** UTEC y UPC inicializadas.
+- [x] **Cursos:** 8 registros activos con metadata de modalidad y geolocalización.
 
-### Esquema SQL (Sprint 1)
+### Esquema SQL (Sprint 1.1)
 ```sql
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
