@@ -42,4 +42,4 @@ app.include_router(router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to Amauta.ai API"}
+    return {"message": "Welcome to Yachachiy.ai API"}

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   ChevronLeft, MapPin, Clock, TrendingUp, DollarSign, 
-  CheckCircle2, AlertCircle, Building, Star
+  CheckCircle2, AlertCircle, Building, Star, ExternalLink
 } from "lucide-react";
 import Link from "next/link";
 
@@ -155,11 +155,17 @@ function CompareContent() {
                     Solicitar Info
                   </Button>
                 </Link>
-                <Button variant="outline" className="w-full text-xs font-bold h-9" asChild>
-                  <a href={course.url} target="_blank" rel="noopener noreferrer">
-                    Sitio Oficial <ExternalLink className="ml-2 h-3 w-3" />
-                  </a>
-                </Button>
+                <a 
+                  href={course.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "sm" }),
+                    "w-full text-xs font-bold h-9 gap-2"
+                  )}
+                >
+                  Sitio Oficial <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
             </Card>
           ))}
