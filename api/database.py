@@ -4,19 +4,23 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
-load_dotenv()
+# Limpiamos explícitamente cualquier rastro de la variable de entorno previa si contiene 'db'
+if os.getenv("DATABASE_URL") and "@db:" in os.getenv("DATABASE_URL"):
+    os.environ.pop("DATABASE_URL")
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+load_dotenv(override=True)
 
-if not DATABASE_URL:
-    POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "postgres")
-    POSTGRES_SERVER = os.getenv("POSTGRES_SERVER", "localhost")
-    POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
-    POSTGRES_DB = os.getenv("POSTGRES_DB", "postgres")
-    DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
+# Priorizamos la variable de entorno del .env, con fallback a SQLite local para exploración segura
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./amauta.db")
 
-engine = create_engine(DATABASE_URL)
+# Configuración específica para SQLite
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(
+        DATABASE_URL, connect_args={"check_same_thread": False}
+  )
+else:
+    engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

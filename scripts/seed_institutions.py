@@ -1,7 +1,5 @@
-import psycopg2
-import os
-
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user_amauta:password_amauta@localhost:5432/amauta_db")
+from api.database import SessionLocal
+from api.models import Institution
 
 INSTITUTIONS = [
     ('Universidad Privada del Norte', 'upn', 'Lima, Trujillo, Cajamarca'),
@@ -25,23 +23,22 @@ INSTITUTIONS = [
 ]
 
 def seed_institutions():
+    db = SessionLocal()
     try:
-        conn = psycopg2.connect(DATABASE_URL)
-        cur = conn.cursor()
-        
         for name, slug, address in INSTITUTIONS:
-            cur.execute("""
-                INSERT INTO institutions (name, slug, address)
-                VALUES (%s, %s, %s)
-                ON CONFLICT (slug) DO NOTHING
-            """, (name, slug, address))
+            # Verificar si ya existe
+            existing = db.query(Institution).filter(Institution.slug == slug).first()
+            if not existing:
+                institution = Institution(name=name, slug=slug, address=address)
+                db.add(institution)
         
-        conn.commit()
-        print(f"Successfully seeded {len(INSTITUTIONS)} institutions.")
-        cur.close()
-        conn.close()
+        db.commit()
+        print(f"Éxito: Se han sembrado {len(INSTITUTIONS)} instituciones.")
     except Exception as e:
-        print(f"Error seeding institutions: {e}")
+        db.rollback()
+        print(f"Error sembrando instituciones: {e}")
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     seed_institutions()

@@ -1,5 +1,4 @@
-from sqlalchemy import Column, String, DECIMAL, ForeignKey, TIMESTAMP, Text, CheckConstraint, UniqueConstraint
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, DECIMAL, ForeignKey, TIMESTAMP, Text, CheckConstraint, UniqueConstraint, Uuid
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import uuid
@@ -8,7 +7,7 @@ from .database import Base
 class Institution(Base):
     __tablename__ = "institutions"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String(255), nullable=False)
     slug = Column(String(255), unique=True, nullable=False)
     website_url = Column(Text)
@@ -23,8 +22,8 @@ class Institution(Base):
 class Course(Base):
     __tablename__ = "courses"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    institution_id = Column(UUID(as_uuid=True), ForeignKey("institutions.id", ondelete="CASCADE"), nullable=False)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    institution_id = Column(Uuid(as_uuid=True), ForeignKey("institutions.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     slug = Column(String(255))
     price_pen = Column(DECIMAL(12, 2))
@@ -48,8 +47,8 @@ class Course(Base):
 class Lead(Base):
     __tablename__ = "leads"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    course_id = Column(UUID(as_uuid=True), ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    course_id = Column(Uuid(as_uuid=True), ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False)
     phone = Column(String(20), nullable=False)

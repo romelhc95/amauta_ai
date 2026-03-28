@@ -1,7 +1,7 @@
 # AMAUTA_MASTER: Especificación y Estado de Amauta.ai
 
 ## Visión: "Google Flights de la Educación Tecnológica en Perú"
-## Stack: Next.js 14, FastAPI, PostgreSQL 16, Redis, Playwright.
+## Stack: Next.js 14, FastAPI, PostgreSQL 16 (Producción) / SQLite (Desarrollo Local), Redis, Playwright.
 
 ## Roles y Responsabilidades Autónomas:
 - @planner: Director Supremo. Orquesta el workflow, crea nuevos agentes si es necesario y reevalúa el progreso.

@@ -6,7 +6,7 @@ Amauta.ai es una plataforma diseñada para centralizar, comparar y optimizar la 
 
 ### Fase 1: Piloto de Recolección (UTEC/UPC) - COMPLETADA
 - [x] Estructura base del proyecto (FastAPI + Next.js).
-- [x] Esquema de PostgreSQL con soporte para geolocalización.
+- [x] Esquema de Base de Datos con soporte para geolocalización.
 - [x] Scripts de recolección de datos automatizados (Playwright).
 - [x] Captura inicial de programas de UTEC y UPC.
 
@@ -38,7 +38,9 @@ Amauta.ai es una plataforma diseñada para centralizar, comparar y optimizar la 
 ### Requisitos Previos
 - Python 3.10+
 - Node.js 18+
-- PostgreSQL activo (o Docker para levantar la base de datos)
+- SQLite (Configurado por defecto para entorno local)
+
+*Nota Arquitectónica: Para el entorno de desarrollo local y exploración del proyecto se utiliza **SQLite**, garantizando que el usuario pueda interactuar con el sistema sin requerir dependencias adicionales como PostgreSQL. Las abstracciones de SQLAlchemy aseguran que el paso a PostgreSQL para producción sea transparente.*
 
 ### 1. Configuración del Backend (API)
 ```bash
