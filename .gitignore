@@ -10,3 +10,5 @@ ENV/
 env/
 .idea/
 .vscode/
+
+gha-creds-*.json

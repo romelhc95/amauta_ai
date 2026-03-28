@@ -18,6 +18,7 @@ class CourseBase(BaseModel):
     address: Optional[str] = None
     duration: Optional[str] = None
     url: Optional[str] = None
+    expected_monthly_salary: Optional[Decimal] = 0.00
 
 class CourseResponse(CourseBase):
     id: UUID
@@ -27,5 +28,19 @@ class CourseResponse(CourseBase):
     created_at: datetime
     updated_at: datetime
     distance_km: Optional[float] = None
+    roi_months: Optional[float] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class LeadCreate(BaseModel):
+    course_id: UUID
+    name: str
+    email: str
+    phone: str
+    message: Optional[str] = None
+
+class LeadResponse(LeadCreate):
+    id: UUID
+    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

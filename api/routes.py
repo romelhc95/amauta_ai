@@ -24,6 +24,7 @@ async def get_courses(
         models.Course.address,
         models.Course.duration,
         models.Course.url,
+        models.Course.expected_monthly_salary,
         models.Course.last_scraped_at,
         models.Course.created_at,
         models.Course.updated_at,
@@ -56,12 +57,25 @@ async def get_courses(
             # Handle cases where row might already be a dict (like in some tests)
             course_dict = dict(row)
         
+        # Geolocation distance
         distance = None
         if client_coords and course_dict.get("location_lat") and course_dict.get("location_long"):
             inst_coords = (float(course_dict["location_lat"]), float(course_dict["location_long"]))
             distance = utils.calculate_distance(client_coords, inst_coords)
         
         course_dict["distance_km"] = distance
+
+        # ROI Calculation (Months to recover investment)
+        # Formula: total_price / expected_salary
+        roi_months = None
+        price = course_dict.get("price_pen", 0)
+        salary = course_dict.get("expected_monthly_salary", 0)
+        
+        if salary and salary > 0:
+            roi_months = float(price / salary)
+        
+        course_dict["roi_months"] = roi_months
+
         processed_results.append(course_dict)
 
     # Sort by distance if available, otherwise just return results
@@ -69,3 +83,73 @@ async def get_courses(
         processed_results.sort(key=lambda x: x["distance_km"] if x["distance_km"] is not None else float('inf'))
 
     return processed_results
+
+@router.get("/courses/{slug}", response_model=schemas.CourseResponse)
+async def get_course_detail(
+    slug: str,
+    request: Request,
+    db: Session = Depends(database.get_db)
+):
+    row = db.query(
+        models.Course.id,
+        models.Course.institution_id,
+        models.Course.name,
+        models.Course.slug,
+        models.Course.price_pen,
+        models.Course.mode,
+        models.Course.address,
+        models.Course.duration,
+        models.Course.url,
+        models.Course.expected_monthly_salary,
+        models.Course.last_scraped_at,
+        models.Course.created_at,
+        models.Course.updated_at,
+        models.Institution.name.label("institution_name"),
+        models.Institution.location_lat,
+        models.Institution.location_long
+    ).join(models.Institution, models.Course.institution_id == models.Institution.id)\
+     .filter(models.Course.slug == slug).first()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    course_dict = dict(zip(row._fields, row))
+    
+    # Geolocation distance
+    client_ip = request.client.host
+    client_coords = await utils.get_client_coordinates(client_ip)
+    
+    distance = None
+    if client_coords and course_dict.get("location_lat") and course_dict.get("location_long"):
+        inst_coords = (float(course_dict["location_lat"]), float(course_dict["location_long"]))
+        distance = utils.calculate_distance(client_coords, inst_coords)
+    
+    course_dict["distance_km"] = distance
+
+    # ROI Calculation
+    roi_months = None
+    price = course_dict.get("price_pen", 0)
+    salary = course_dict.get("expected_monthly_salary", 0)
+    
+    if salary and salary > 0:
+        roi_months = float(price / salary)
+    
+    course_dict["roi_months"] = roi_months
+
+    return course_dict
+
+@router.post("/leads", response_model=schemas.LeadResponse)
+async def create_lead(
+    lead: schemas.LeadCreate,
+    db: Session = Depends(database.get_db)
+):
+    # Check if course exists
+    course = db.query(models.Course).filter(models.Course.id == lead.course_id).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    db_lead = models.Lead(**lead.model_dump())
+    db.add(db_lead)
+    db.commit()
+    db.refresh(db_lead)
+    return db_lead

@@ -32,6 +32,7 @@ class Course(Base):
     address = Column(Text)
     duration = Column(String(100))
     url = Column(Text)
+    expected_monthly_salary = Column(DECIMAL(12, 2), default=0.00)
     last_scraped_at = Column(TIMESTAMP(timezone=True))
     created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
     updated_at = Column(TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now())
@@ -43,3 +44,14 @@ class Course(Base):
         CheckConstraint("mode IN ('Presencial', 'Híbrido', 'Remoto')", name="mode_check"),
         UniqueConstraint("institution_id", "name", "slug", name="unique_institution_course_slug"),
     )
+
+class Lead(Base):
+    __tablename__ = "leads"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    course_id = Column(UUID(as_uuid=True), ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
+    name = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False)
+    phone = Column(String(20), nullable=False)
+    message = Column(Text)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=func.now())
